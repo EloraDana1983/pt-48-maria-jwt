@@ -13,7 +13,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			token: ""
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -46,7 +47,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
-			}
+			},
+			setToken: async (email, password) => {
+				const store = getStore();
+				const response = await fetch(`${process.env.BACKEND_URL}/api/token`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ email, password })
+				});
+				const data = await response.json();
+				setStore({ ...store, token: data.token });
+				// localStorage.setItem('token', data.token)
+			},
+			clearToken: () => {
+				const store = getStore();
+				setStore({ ...store, token: '' });
+				// localStorage.setItem('token', '');
+			},
 		}
 	};
 };
